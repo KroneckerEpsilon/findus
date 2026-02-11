@@ -9,37 +9,46 @@
     #end
 
     function echo_findus
-        function _findus_frame --argument ears leye reye offset
+        function _findus_frame --argument ears leye reye offset name
             clear
             printf "%*s         ______ _           _     \n" $offset ""
             printf "%*s         |  ___(_)         | |    \n" $offset ""
             printf "%*s         | |_   _ _ __   __| |%s   %s ___  \n" $offset "" $ears $ears
             printf "%*s         |  _| | | '_ \ / _` | | | / __| \n" $offset ""
             printf "%*s         | |   | | | | | (_| ( %s×%s \\__ \\ \n" $offset "" $leye $reye
-            printf "%*s         \\_|   |_|_| |_|\\__,_|\\___/|___/ by JK\n" $offset ""
+            printf "%*s         \\_|   |_|_| |_|\\__,_|\\___/|___/ %s\n" $offset "" $name
             echo ""
         end
     
         set_color blue
     
         # normal
-        _findus_frame "Λ" ">" "<" 0
-        sleep 0.25
-    
-        # blink
-        _findus_frame "_" ">" "<" 0
+        _findus_frame "Λ" ">" "<" 0 ""
         sleep 0.15
     
         # normal
-        _findus_frame "_" "-" "-" 0
-        sleep 0.25
+        _findus_frame "Λ" ">" "<" 0 "b"
+        sleep 0.15
+        
+        # blink
+        _findus_frame "_" ">" "<" 0 "by"
+        sleep 0.15
+    
+        # normal
+        _findus_frame "_" "-" "-" 0 "by "
+        sleep 0.15
+        
+        # normal
+        _findus_frame "_" "-" "-" 0 "by J"
+        sleep 0.15
     
         # angry blink
-        _findus_frame "Λ" "-" "-" 0
+        _findus_frame "Λ" "-" "-" 0 "by JK"
         sleep 0.15
     
         # final pose
-        _findus_frame "Λ" ">" "<" 0
+        _findus_frame "Λ" ">" "<" 0 "by JK"
+        sleep 0.65
     
         set_color normal
     end
@@ -87,7 +96,8 @@
         end
         
         echo_findus
-
+        echo "           FINDING $2 in $1" 
+        echo 
         # Nur Textfiles sammeln
         set files
         for f in (find $dir -type f -name $pattern)
@@ -117,13 +127,30 @@
 
     #alias findus-cpp-children 'find . \( -name "*.h" -o -name "*.hh" \) \
     #                           | xargs grep -nE "^\s*(class|struct)\s+\w+\s*:\s*public\s+\w+"'
-    alias findus-cpp-classes 'echo_findus && grep -nE "^\s*(class|struct)\s+\w+" $(find . -name "*.h" -o -name "*.hh")'
+    alias findus-cpp-classes 'echo_findus && echo "           FINDING CLASSES" && echo && grep -nE "^\s*(class|struct)\s+\w+" $(find . -name "*.h" -o -name "*.hh" -o -name "*.hpp")'
+
+    
+    function findus-cpp-regex
+        set cname $argv[1]
+    
+        if test -z "$cname"
+            echo "usage: findus-cpp-regex <Regex>"
+            return 1
+        end
+    
+        echo_findus
+        echo "         FINDING REGEX" 
+        echo
+        grep -nE "\s*($cname)\b" $(find . -name "*.c" -o -name "*.cc" -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -o -name "*.hh")
+    end
 
     function findus-cpp-children
         set green "\033[32m"
         set red "\033[31m"
         set reset "\033[0m"
         echo_findus 
+        echo "           FINDING CHILD CLASS DEPENDENCIES" 
+        echo 
         find . \( -name "*.h" -o -name "*.hh" \) \
         | xargs grep -nE '^\s*(class|struct)\s+\w+\s*:\s*public\s+' \
         | awk -v GREEN="$green" -v RED="$red" -v RESET="$reset" '
