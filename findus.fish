@@ -117,9 +117,8 @@
 
     #alias findus-cpp-children 'find . \( -name "*.h" -o -name "*.hh" \) \
     #                           | xargs grep -nE "^\s*(class|struct)\s+\w+\s*:\s*public\s+\w+"'
-    alias findus-cpp-classes 'echo_findus && echo find . \( -name "*.h" -o -name "*.hh" \) \
-                               | xargs grep -nE "^\s*(class|struct)\s+\w+"'
-  
+    alias findus-cpp-classes 'echo_findus && grep -nE "^\s*(class|struct)\s+\w+" $(find . -name "*.h" -o -name "*.hh")'
+
     function findus-cpp-children
         set green "\033[32m"
         set red "\033[31m"
